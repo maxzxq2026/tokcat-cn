@@ -328,8 +328,8 @@ export default function App() {
     <div className="page" ref={pageRef}>
       <div className="page-content" ref={contentRef}>
         <Panel>
-          {!payload && !error && <div className="loading">Loading…</div>}
-          {error && <div className="error">Error: {error}</div>}
+          {!payload && !error && <div className="loading">加载中…</div>}
+          {error && <div className="error">错误: {error}</div>}
           {payload && overviewStats && activeStats && (
             <>
               <HeaderBar
@@ -348,8 +348,8 @@ export default function App() {
                   <UsageBarGraph2D
                     payload={payload}
                     clientIds={presentClients}
-                    title="Token Usage"
-                    subtitle="Stacked by agent"
+                    title="Token 用量"
+                    subtitle="按 Agent 堆叠"
                     view={usageView}
                     onViewChange={setUsageView}
                     grid={overviewGrid}
@@ -363,7 +363,7 @@ export default function App() {
                     buckets={trace}
                     windowSecs={600}
                     detailed={settings.detailedTrace}
-                    title="Live session"
+                    title="实时会话"
                   />
                   <StreaksCard longest={overviewStats.streaks.longest} current={overviewStats.streaks.current} />
                 </div>
@@ -374,13 +374,13 @@ export default function App() {
                     trace={trace}
                     agentUsage={agentUsage.payload}
                     title={`${getClientStyle(activeTab).displayName} limits`}
-                    note="Session / weekly / model limits"
+                    note="会话 / 每周 / 模型限额"
                   />
                   <UsageBarGraph2D
                     payload={payload}
                     clientIds={[activeTab]}
-                    title="Token Usage"
-                    subtitle="Local token history"
+                    title="Token 用量"
+                    subtitle="本地 Token 历史"
                     view={usageView}
                     onViewChange={setUsageView}
                     grid={activeGrid}
@@ -407,13 +407,13 @@ export default function App() {
           <div className="settings-overlay" onClick={() => setAboutOpen(false)} />
           <div className="settings-panel" role="dialog">
             <div className="settings-head">
-              <strong>About Tokcat</strong>
+              <strong>关于 Tokcat</strong>
               <button className="settings-close" onClick={() => setAboutOpen(false)}>×</button>
             </div>
             <div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text-secondary)' }}>
               <div><strong>Tokcat</strong> — version {appVersion || 'unknown'}</div>
               <div style={{ marginTop: 8 }}>
-                Native macOS menubar dashboard for local AI token usage.
+                macOS 菜单栏 AI Token 用量监控面板。
               </div>
               <div style={{ marginTop: 8 }}>
                 <a

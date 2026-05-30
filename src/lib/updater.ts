@@ -28,12 +28,12 @@ async function promptInstall(update: any): Promise<boolean> {
   const body = update.body ? `\n\n${update.body}` : ''
   return withDialogShield(() =>
     ask(
-      `Tokcat ${update.version} is available.${body}\n\nInstall and restart now?`,
+      `Tokcat ${update.version} 可用。${body}\n\n立即安装并重启？`,
       {
-        title: 'Update available',
+        title: '发现更新',
         kind: 'info',
-        okLabel: 'Install',
-        cancelLabel: 'Later',
+        okLabel: '安装',
+        cancelLabel: '稍后',
       },
     ),
   )

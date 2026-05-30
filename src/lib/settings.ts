@@ -29,8 +29,8 @@ export const DEFAULT_SETTINGS: Settings = {
 }
 
 export const ANIMATION_STYLE_LABELS: Record<AnimationStyle, string> = {
-  cat: 'Spinning cat',
-  parrot: 'Party parrot',
+  cat: '旋转猫咪',
+  parrot: '派对鹦鹉',
 }
 
 const KEY = 'tokcat:settings:v1'
@@ -58,12 +58,12 @@ export function saveSettings(s: Settings) {
 }
 
 export const TRAY_MODE_LABELS: Record<TrayMode, string> = {
-  today_tokens: "Today's tokens (50M)",
-  today_cost: "Today's cost ($5.20)",
-  total_tokens: 'Total tokens (1.5B)',
-  total_cost: 'Total cost ($889)',
-  tokens_per_min: 'Tokens / min (12.4K/m)',
-  hidden: 'Icon only',
+  today_tokens: '今日 Token (50M)',
+  today_cost: '今日费用 ($5.20)',
+  total_tokens: '总 Token (1.5B)',
+  total_cost: '总费用 ($889)',
+  tokens_per_min: 'Token / 分钟 (12.4K/m)',
+  hidden: '仅图标',
 }
 
 export function computeTrayTitle(

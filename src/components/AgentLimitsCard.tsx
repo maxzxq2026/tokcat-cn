@@ -50,7 +50,7 @@ function mark(id: string) {
   )
 }
 
-export function AgentLimitsCard({ clients, trace, agentUsage, title = 'Agent limits', note = 'OAuth quota' }: Props) {
+export function AgentLimitsCard({ clients, trace, agentUsage, title = 'Agent 限额', note = 'OAuth 配额' }: Props) {
   const liveClients = new Set(trace.filter(t => t.tokens_per_min > 0).map(t => normalizeTraceClient(t.client)))
   const snapshots = new Map((agentUsage?.agents ?? []).map(agent => [agent.clientId, agent]))
   const visibleClients = Array.from(new Set([
@@ -65,7 +65,7 @@ export function AgentLimitsCard({ clients, trace, agentUsage, title = 'Agent lim
         <span className="limits-note">{note}</span>
       </div>
       {visibleClients.length === 0 ? (
-        <div className="limits-empty">No supported agents yet</div>
+        <div className="limits-empty">暂无已支持的 Agent</div>
       ) : (
         <div className={`limits-list${visibleClients.length === 1 ? ' is-single' : ''}`}>
           {visibleClients.map(id => {
@@ -96,7 +96,7 @@ export function AgentLimitsCard({ clients, trace, agentUsage, title = 'Agent lim
                   {rows.map(row => {
                     const remaining = 'remainingPercent' in row ? row.remainingPercent : undefined
                     const fill = remaining ?? 0
-                    const left = remaining === undefined ? 'No data' : `${Math.max(0, remaining).toFixed(0)}% left`
+                    const left = remaining === undefined ? '暂无数据' : `剩余 ${Math.max(0, remaining).toFixed(0)}%`
                     return (
                       <div className="limit-window" key={row.label}>
                         <div className="limit-window-meta">
@@ -127,8 +127,8 @@ export function AgentLimitsCard({ clients, trace, agentUsage, title = 'Agent lim
 }
 
 function statusText(snapshot: AgentUsageSnapshot | undefined, isLive: boolean): string {
-  if (snapshot?.error) return 'Error'
+  if (snapshot?.error) return '错误'
   if (snapshot?.windows.length) return snapshot.source.toUpperCase()
-  if (isLive) return 'Live'
-  return 'No quota'
+  if (isLive) return '活跃'
+  return '无配额'
 }

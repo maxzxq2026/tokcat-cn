@@ -55,7 +55,7 @@ function collapseByClient(buckets: TraceBucket[]): TraceBucket[] {
   }).sort((a, b) => b.tokens - a.tokens)
 }
 
-export function UsageTraceCard({ buckets, windowSecs, detailed, title = 'Live trace' }: Props) {
+export function UsageTraceCard({ buckets, windowSecs, detailed, title = '实时追踪' }: Props) {
   const rows = detailed ? buckets : collapseByClient(buckets)
   const top = rows.slice(0, 5)
   const max = top.reduce((m, b) => Math.max(m, b.tokens_per_min), 0)
@@ -67,11 +67,11 @@ export function UsageTraceCard({ buckets, windowSecs, detailed, title = 'Live tr
       <div className="trace-head">
         <h2 className="trace-heading">{title}</h2>
         <div className="trace-sub">
-          last {windowMin}m · {humanizeTokens(Math.round(totalRate))}/m total
+          最近 {windowMin} 分钟 · 共 {humanizeTokens(Math.round(totalRate))}/分钟
         </div>
       </div>
       {top.length === 0 ? (
-        <div className="trace-empty">No activity in this window</div>
+        <div className="trace-empty">当前窗口无活动</div>
       ) : (
         <div className="trace-rows">
           {top.map(b => {

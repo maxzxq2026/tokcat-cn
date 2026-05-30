@@ -20,7 +20,7 @@ export function HeaderBar({ totalTokens, year, years, onYearChange, theme, onThe
         <img className="brand-logo" src="/tokcat-logo.png" alt="" aria-hidden="true" data-tauri-drag-region />
         <div className="header-title" data-tauri-drag-region>
           <span className="header-num" data-tauri-drag-region>{humanizeTokens(totalTokens)}</span>
-          <span className="header-text" data-tauri-drag-region> tokens used in </span>
+          <span className="header-text" data-tauri-drag-region> 个 Token 已使用，年份 </span>
           <select className="year-select" value={year} onChange={e => onYearChange(e.target.value)}>
             {years.map(y => (
               <option key={y} value={y}>{y}</option>

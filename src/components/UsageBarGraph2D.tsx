@@ -97,7 +97,7 @@ export function UsageBarGraph2D({
   stats,
 }: Props) {
   const [hover, setHover] = useState<HoverState | null>(null)
-  const headSubtitle = stats && view === '3d' ? 'Full year' : subtitle
+  const headSubtitle = stats && view === '3d' ? '全年' : subtitle
   const bars = useMemo(() => {
     const allowed = new Set(clientIds)
     const byDate = new Map<string, DayBar>()

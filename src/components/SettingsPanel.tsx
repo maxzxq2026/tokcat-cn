@@ -143,7 +143,7 @@ export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
       <div className="settings-overlay" onClick={onClose} />
       <div className="settings-panel" role="dialog">
         <div className="settings-head">
-          <strong>Settings</strong>
+          <strong>设置</strong>
           <button className="settings-close" onClick={onClose} aria-label="Close">
             ×
           </button>
@@ -151,7 +151,7 @@ export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
 
         <div className="settings-body">
           <section className="settings-section">
-            <div className="settings-label">Menubar title</div>
+            <div className="settings-label">菜单栏标题</div>
             <div className="settings-group">
               {modes.map((m, i) => {
                 const active = settings.trayMode === m
@@ -173,10 +173,10 @@ export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
 
           {tauri && (
             <section className="settings-section">
-              <div className="settings-label">Startup</div>
+              <div className="settings-label">启动</div>
               <div className="settings-group">
                 <div className="settings-row">
-                  <span className="settings-row-label">Launch at login</span>
+                  <span className="settings-row-label">登录时启动</span>
                   <SwitchToggle
                     checked={settings.autostart}
                     disabled={autostartBusy}
@@ -189,10 +189,10 @@ export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
 
           {tauri && (
             <section className="settings-section">
-              <div className="settings-label">Menubar icon</div>
+              <div className="settings-label">菜单栏图标</div>
               <div className="settings-group">
                 <div className="settings-row">
-                  <span className="settings-row-label">Animate based on token usage</span>
+                  <span className="settings-row-label">根据 Token 用量显示动画</span>
                   <SwitchToggle
                     checked={settings.animateTray}
                     onChange={next => onChange({ ...settings, animateTray: next })}
@@ -219,10 +219,10 @@ export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
           )}
 
           <section className="settings-section">
-            <div className="settings-label">Live trace</div>
+            <div className="settings-label">实时追踪</div>
             <div className="settings-group">
               <div className="settings-row">
-                <span className="settings-row-label">Split by agent / model</span>
+                <span className="settings-row-label">按 Agent / 模型拆分</span>
                 <SwitchToggle
                   checked={settings.detailedTrace}
                   onChange={next => onChange({ ...settings, detailedTrace: next })}
@@ -232,21 +232,21 @@ export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
           </section>
 
           <section className="settings-section">
-            <div className="settings-label">About</div>
+            <div className="settings-label">关于</div>
             <div className="settings-group">
               <div className="settings-row">
-                <span className="settings-row-label">Version</span>
+                <span className="settings-row-label">版本</span>
                 <span className="settings-row-meta">{version || '—'}</span>
               </div>
               {tauri && (
                 <div className="settings-row">
-                  <span className="settings-row-label">Check for updates</span>
+                  <span className="settings-row-label">检查更新</span>
                   <button
                     className="settings-button"
                     onClick={checkUpdates}
                     disabled={updateBusy}
                   >
-                    {updateBusy ? 'Checking…' : 'Check Now'}
+                    {updateBusy ? '检查中…' : '立即检查'}
                   </button>
                 </div>
               )}
@@ -256,7 +256,7 @@ export function SettingsPanel({ open, onClose, settings, onChange }: Props) {
           {tauri && (
             <section className="settings-section">
               <button className="settings-quit" onClick={quitApp}>
-                Quit Tokcat
+                退出 Tokcat
               </button>
             </section>
           )}

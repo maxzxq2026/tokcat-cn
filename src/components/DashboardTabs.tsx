@@ -42,7 +42,7 @@ export function DashboardTabs({ clients, active, onChange }: Props) {
           <span />
           <span />
         </span>
-        <span>Overview</span>
+        <span>总览</span>
       </button>
       {clients.map(id => {
         const style = getClientStyle(id)
