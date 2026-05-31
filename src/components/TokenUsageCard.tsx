@@ -1,33 +1,54 @@
 import React from 'react'
 import type { Stats } from '../lib/types'
-import { formatCost, formatMMDD, formatMonthDay, humanizeTokens } from '../lib/format'
+import { humanizeTokens } from '../lib/format'
 
-export function TokenUsageCard({ stats, bare = false }: { stats: Stats; bare?: boolean }) {
-  const range = `${formatMMDD(stats.dateRange.start)} → ${formatMMDD(stats.dateRange.end)}`
+interface Props {
+  stats: Stats
+  bare?: boolean
+  month?: number
+  year?: string
+}
+
+export function TokenUsageCard({ stats, bare = false, month, year }: Props) {
+  // 获取今天的日期
+  const today = new Date()
+  const todayStr = `${today.getMonth() + 1}/${today.getDate()}`
+
+  // 获取月份显示
+  const currentMonth = month || today.getMonth() + 1
+  const currentYear = year || String(today.getFullYear())
+  const monthStr = month === 0 ? `${currentYear}` : `${currentYear}/${currentMonth}`
+
+  // 获取峰值日期
+  const peakDate = stats.bestDay ? formatMonthDay(stats.bestDay.date) : '—'
+
   const grid = (
     <div className={`usage-row-card${bare ? ' is-bare' : ''}`}>
       <div className="usage-cell">
-        <div className="usage-num">{formatCost(stats.totalCost)}</div>
-        <div className="usage-label">Total</div>
-        <div className="usage-sub">{range}</div>
+        <div className="usage-num">{humanizeTokens(stats.todayTokens)}</div>
+        <div className="usage-label">今天</div>
       </div>
       <div className="usage-cell">
-        <div className="usage-num">{humanizeTokens(stats.totalTokens)}</div>
-        <div className="usage-label">Tokens</div>
-        <div className="usage-sub">{stats.activeDays} active days</div>
+        <div className="usage-num">{humanizeTokens(stats.monthTokens)}</div>
+        <div className="usage-label">{monthStr}</div>
       </div>
       <div className="usage-cell">
-        <div className="usage-num">{stats.bestDay ? formatCost(stats.bestDay.cost) : '$0.00'}</div>
-        <div className="usage-label">Best day</div>
-        <div className="usage-sub">{stats.bestDay ? formatMonthDay(stats.bestDay.date) : '—'}</div>
+        <div className="usage-num">{humanizeTokens(stats.peakDayTokens)}</div>
+        <div className="usage-label">{peakDate}</div>
       </div>
     </div>
   )
   if (bare) return grid
   return (
     <div className="usage-card">
-      <h2 className="usage-heading">Token Usage</h2>
+      <h2 className="usage-heading">Token 用量</h2>
       {grid}
     </div>
   )
+}
+
+// 格式化月日
+function formatMonthDay(dateStr: string): string {
+  const date = new Date(dateStr)
+  return `${date.getMonth() + 1}/${date.getDate()}`
 }

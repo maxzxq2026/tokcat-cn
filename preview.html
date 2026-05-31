@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Agent 多模型颜色预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    background: #1a1a2e;
+    color: #e8e8ed;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: center;
+  }
+  h1 { font-size: 20px; font-weight: 600; color: #a0a0b0; }
+  h2 { font-size: 14px; font-weight: 600; color: #8e8e93; margin-bottom: 8px; }
+
+  .card {
+    background: rgba(30, 30, 46, 0.92);
+    border: 0.5px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 16px;
+    width: 520px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 650;
+    margin-bottom: 4px;
+  }
+  .card-subtitle {
+    font-size: 11px;
+    color: #8e8e93;
+    margin-bottom: 12px;
+  }
+
+  /* 柱状图 */
+  .model-bars { display: flex; flex-direction: column; gap: 6px; }
+  .model-bar-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+    align-items: center;
+  }
+  .model-bar-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #e8e8ed;
+    white-space: nowrap;
+  }
+  .model-bar-track {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(120, 120, 128, 0.12);
+    overflow: hidden;
+  }
+  .model-bar-fill { height: 100%; }
+  .model-bar-val {
+    font-size: 11px;
+    font-weight: 600;
+    color: #8e8e93;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* 饼图 */
+  .pie-chart { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .pie-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; }
+  .pie-legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; }
+  .pie-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .pie-legend-label { color: #e8e8ed; }
+  .pie-legend-value { color: #8e8e93; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>Agent 多模型颜色预览</h1>
+
+<!-- Claude Code 5个模型 -->
+<div class="card">
+  <div class="card-title">Claude Code 模型用量</div>
+  <div class="card-subtitle">5月</div>
+  <div class="model-bars">
+    <div class="model-bar-row">
+      <div class="model-bar-label">claude-3.5-sonnet</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:100%;background:#8b5cf6"></div></div>
+      <div class="model-bar-val">1.2M 20% 80次</div>
+    </div>
+    <div class="model-bar-row">
+      <div class="model-bar-label">claude-3-opus</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:70%;background:#10b981"></div></div>
+      <div class="model-bar-val">850K 50% 567次</div>
+    </div>
+    <div class="model-bar-row">
+      <div class="model-bar-label">claude-3-haiku</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:40%;background:#3b82f6"></div></div>
+      <div class="model-bar-val">480K 80% 234次</div>
+    </div>
+    <div class="model-bar-row">
+      <div class="model-bar-label">claude-3.5-haiku</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:25%;background:#f59e0b"></div></div>
+      <div class="model-bar-val">300K 15% 120次</div>
+    </div>
+    <div class="model-bar-row">
+      <div class="model-bar-label">claude-4-sonnet</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:15%;background:#ef4444"></div></div>
+      <div class="model-bar-val">180K 10% 50次</div>
+    </div>
+  </div>
+</div>
+
+<!-- Claude Code 饼图 -->
+<div class="card">
+  <div class="card-title">Claude Code 模型占比</div>
+  <div class="card-subtitle">5月</div>
+  <div class="pie-chart">
+    <svg width="180" height="180" viewBox="0 0 180 180">
+      <path d="M 90 90 L 90 10 A 80 80 0 1 1 38.7 145 Z" fill="#8b5cf6" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 90 90 L 38.7 145 A 80 80 0 0 1 10.2 55 Z" fill="#10b981" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 90 90 L 10.2 55 A 80 80 0 0 1 90 10 Z" fill="#3b82f6" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 90 90 L 90 10 A 80 80 0 0 1 161 55 Z" fill="#f59e0b" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 90 90 L 161 55 A 80 80 0 0 1 169 100 Z" fill="#ef4444" stroke="#1a1a2e" stroke-width="2"/>
+    </svg>
+    <div class="pie-legend">
+      <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#8b5cf6"></span><span class="pie-legend-label">sonnet</span><span class="pie-legend-value">45%</span></div>
+      <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#10b981"></span><span class="pie-legend-label">opus</span><span class="pie-legend-value">25%</span></div>
+      <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#3b82f6"></span><span class="pie-legend-label">haiku</span><span class="pie-legend-value">15%</span></div>
+      <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#f59e0b"></span><span class="pie-legend-label">3.5-haiku</span><span class="pie-legend-value">10%</span></div>
+      <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#ef4444"></span><span class="pie-legend-label">claude-4</span><span class="pie-legend-value">5%</span></div>
+    </div>
+  </div>
+</div>
+
+<h2>其他 Agent 示例</h2>
+
+<!-- Cursor 4个模型 -->
+<div class="card">
+  <div class="card-title">Cursor 模型用量</div>
+  <div class="card-subtitle">5月</div>
+  <div class="model-bars">
+    <div class="model-bar-row">
+      <div class="model-bar-label">gpt-4o</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:100%;background:#8b5cf6"></div></div>
+      <div class="model-bar-val">3.2M 25% 2.1K次</div>
+    </div>
+    <div class="model-bar-row">
+      <div class="model-bar-label">claude-3.5-sonnet</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:65%;background:#10b981"></div></div>
+      <div class="model-bar-val">2.1M 30% 1.5K次</div>
+    </div>
+    <div class="model-bar-row">
+      <div class="model-bar-label">gemini-2.0-flash</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:40%;background:#3b82f6"></div></div>
+      <div class="model-bar-val">1.3M 45% 890次</div>
+    </div>
+    <div class="model-bar-row">
+      <div class="model-bar-label">deepseek-v3</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:20%;background:#f59e0b"></div></div>
+      <div class="model-bar-val">640K 60% 340次</div>
+    </div>
+  </div>
+</div>
+
+<!-- Gemini 3个模型 -->
+<div class="card">
+  <div class="card-title">Gemini CLI 模型用量</div>
+  <div class="card-subtitle">5月</div>
+  <div class="model-bars">
+    <div class="model-bar-row">
+      <div class="model-bar-label">gemini-2.0-flash</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:100%;background:#8b5cf6"></div></div>
+      <div class="model-bar-val">5.8M 35% 3.2K次</div>
+    </div>
+    <div class="model-bar-row">
+      <div class="model-bar-label">gemini-1.5-pro</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:55%;background:#10b981"></div></div>
+      <div class="model-bar-val">3.2M 20% 1.8K次</div>
+    </div>
+    <div class="model-bar-row">
+      <div class="model-bar-label">gemini-2.0-pro</div>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:30%;background:#3b82f6"></div></div>
+      <div class="model-bar-val">1.7M 40% 950次</div>
+    </div>
+  </div>
+</div>
+
+<!-- 总览 Agent 占比 -->
+<div class="card">
+  <div class="card-title">Agent 占比</div>
+  <div class="card-subtitle">5月</div>
+  <div class="pie-chart">
+    <svg width="180" height="180" viewBox="0 0 180 180">
+      <path d="M 90 90 L 90 10 A 80 80 0 1 1 18.7 55 Z" fill="#d97706" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 90 90 L 18.7 55 A 80 80 0 0 1 10.2 110 Z" fill="#60a5fa" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 90 90 L 10.2 110 A 80 80 0 0 1 90 170 Z" fill="#0ea5e9" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 90 90 L 90 170 A 80 80 0 0 1 161 110 Z" fill="#fbbf24" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 90 90 L 161 110 A 80 80 0 0 1 169 55 Z" fill="#10b981" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 90 90 L 169 55 A 80 80 0 0 1 90 10 Z" fill="#dc2626" stroke="#1a1a2e" stroke-width="2"/>
+    </svg>
+    <div class="pie-legend">
+      <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#d97706"></span><span class="pie-legend-label">Claude Code</span><span class="pie-legend-value">35%</span></div>
+      <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#60a5fa"></span><span class="pie-legend-label">Gemini CLI</span><span class="pie-legend-value">25%</span></div>
+      <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#0ea5e9"></span><span class="pie-legend-label">Cursor</span><span class="pie-legend-value">20%</span></div>
+      <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#fbbf24"></span><span class="pie-legend-label">Hermes</span><span class="pie-legend-value">10%</span></div>
+      <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#10b981"></span><span class="pie-legend-label">Amp</span><span class="pie-legend-value">7%</span></div>
+      <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#dc2626"></span><span class="pie-legend-label">OpenCode</span><span class="pie-legend-value">3%</span></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

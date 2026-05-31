@@ -76,4 +76,7 @@ export interface Stats {
   presentClients: string[]
   years: YearMeta[]
   maxTokens: number
+  todayTokens: number
+  monthTokens: number
+  peakDayTokens: number
 }

@@ -3,8 +3,9 @@ import { getClientStyle } from '../lib/clients'
 import { addDays, formatCost, formatMonthDay, isoDate, parseISODate } from '../lib/format'
 import type { Contribution, Stats, TokenBreakdown, UsagePayload } from '../lib/types'
 import type { GridLayout } from '../lib/grid'
-import { ContributionGraph3D } from './ContributionGraph3D'
+import { PieChart } from './PieChart'
 import { TokenUsageCard } from './TokenUsageCard'
+import { aggregateByModel } from '../lib/stats'
 
 export type UsageView = '2d' | '3d'
 
@@ -19,6 +20,9 @@ interface Props {
   graphLight: string
   graphDark: string
   accent: string
+  contributions: Contribution[]
+  month?: number
+  year?: string
   /** When provided, the card leads with these token-usage totals (shown in both 2D and 3D). */
   stats?: Stats
 }
@@ -94,10 +98,96 @@ export function UsageBarGraph2D({
   graphLight,
   graphDark,
   accent,
+  contributions,
+  month,
+  year,
   stats,
 }: Props) {
   const [hover, setHover] = useState<HoverState | null>(null)
-  const headSubtitle = stats && view === '3d' ? '全年' : subtitle
+  const headSubtitle = subtitle
+
+  // 计算饼图数据
+  const pieSegments = useMemo(() => {
+    // 颜色调色板（与 ModelBarChart 保持一致）
+    const COLOR_PALETTE = [
+      '#8b5cf6', '#10b981', '#3b82f6', '#f59e0b', '#ef4444',
+      '#ec4899', '#06b6d4', '#f97316', '#84cc16', '#a855f7',
+    ]
+
+    // 特定模型的固定颜色
+    const MODEL_FIXED_COLORS: Record<string, string> = {
+      'deepseek': '#0066ff',
+      'mimo': '#ff6b35',
+      'qwen': '#7c3aed',
+      'claude': '#8b5cf6',
+      'sonnet': '#8b5cf6',
+      'opus': '#7c3aed',
+      'haiku': '#a78bfa',
+      'gpt': '#10b981',
+      'gpt-4o': '#059669',
+      'gemini': '#3b82f6',
+      'hermes': '#fbbf24',
+      'llama': '#ef4444',
+    }
+
+    function getModelColor(model: string): string {
+      const lower = model.toLowerCase()
+      const sortedKeys = Object.keys(MODEL_FIXED_COLORS).sort((a, b) => b.length - a.length)
+      for (const key of sortedKeys) {
+        if (lower.includes(key)) return MODEL_FIXED_COLORS[key]
+      }
+      return ''
+    }
+
+    // 确定目标月份
+    const targetMonth = month && month > 0 ? month : new Date().getMonth() + 1
+
+    // 按月过滤贡献数据
+    const filteredContributions = contributions.filter(c => {
+      const date = new Date(c.date)
+      return date.getMonth() + 1 === targetMonth
+    })
+
+    // 单个 Agent 页面：显示该 Agent 使用的模型占比
+    if (clientIds.length === 1) {
+      const modelMap = new Map<string, number>()
+      for (const contribution of filteredContributions) {
+        for (const client of contribution.clients) {
+          if (!clientIds.includes(client.client)) continue
+          const model = client.modelId || 'unknown'
+          const tokens = (client.tokens.input || 0) + (client.tokens.output || 0) +
+            (client.tokens.cacheRead || 0) + (client.tokens.cacheWrite || 0) +
+            (client.tokens.reasoning || 0)
+          modelMap.set(model, (modelMap.get(model) || 0) + tokens)
+        }
+      }
+      // 按 Token 排序后分配颜色
+      const sorted = Array.from(modelMap.entries()).sort((a, b) => b[1] - a[1])
+      let paletteIndex = 0
+      return sorted.map(([model, tokens]) => {
+        const fixedColor = getModelColor(model)
+        const color = fixedColor || COLOR_PALETTE[paletteIndex++ % COLOR_PALETTE.length]
+        return { label: model, value: tokens, color }
+      })
+    }
+
+    // 总览页面：显示各 Agent 占比
+    const agentMap = new Map<string, number>()
+    for (const contribution of filteredContributions) {
+      for (const client of contribution.clients) {
+        if (!clientIds.includes(client.client)) continue
+        const tokens = (client.tokens.input || 0) + (client.tokens.output || 0) +
+          (client.tokens.cacheRead || 0) + (client.tokens.cacheWrite || 0) +
+          (client.tokens.reasoning || 0)
+        agentMap.set(client.client, (agentMap.get(client.client) || 0) + tokens)
+      }
+    }
+    return Array.from(agentMap.entries()).map(([clientId, tokens]) => ({
+      label: getClientStyle(clientId).displayName,
+      value: tokens,
+      color: getClientStyle(clientId).color
+    })).sort((a, b) => b.value - a.value)
+  }, [contributions, clientIds, month])
   const bars = useMemo(() => {
     const allowed = new Set(clientIds)
     const byDate = new Map<string, DayBar>()
@@ -166,7 +256,7 @@ export function UsageBarGraph2D({
               onClick={() => onViewChange('2d')}
               aria-pressed={view === '2d'}
             >
-              2D
+              用量
             </button>
             <button
               type="button"
@@ -174,7 +264,7 @@ export function UsageBarGraph2D({
               onClick={() => onViewChange('3d')}
               aria-pressed={view === '3d'}
             >
-              3D
+              占比
             </button>
           </div>
           <div className="bar2d-legend">
@@ -190,17 +280,14 @@ export function UsageBarGraph2D({
 
       {stats && (
         <div className="bar2d-stats">
-          <TokenUsageCard stats={stats} bare />
+          <TokenUsageCard stats={stats} bare month={month} year={year} />
         </div>
       )}
 
       {view === '3d' ? (
-        <ContributionGraph3D
-          grid={grid}
-          activeLight={graphLight}
-          activeDark={graphDark}
-          accent={accent}
-        />
+        <div className="bar2d-pie">
+          <PieChart segments={pieSegments} size={180} />
+        </div>
       ) : (
       <div className="bar2d-chart" onMouseLeave={() => setHover(null)}>
         <svg className="bar2d-svg" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
@@ -227,7 +314,7 @@ export function UsageBarGraph2D({
                       opacity={0.86}
                     >
                       <title>
-                        {`${formatMonthDay(bar.date)} • ${getClientStyle(segment.clientId).displayName} • ${exactTokens(segment.tokens)} tokens • ${formatCost(segment.cost)}`}
+                        {`${formatMonthDay(bar.date)} • ${getClientStyle(segment.clientId).displayName} • ${exactTokens(segment.tokens)} tokens`}
                       </title>
                     </rect>
                   )
@@ -244,7 +331,7 @@ export function UsageBarGraph2D({
                     height={chartHeight}
                     tabIndex={0}
                     role="img"
-                    aria-label={`${formatMonthDay(bar.date)}, ${exactTokens(bar.totalTokens)} tokens, ${formatCost(bar.totalCost)}`}
+                    aria-label={`${formatMonthDay(bar.date)}, ${exactTokens(bar.totalTokens)} tokens`}
                     onMouseEnter={() => showTooltip(bar, index)}
                     onMouseMove={() => showTooltip(bar, index)}
                     onFocus={() => showTooltip(bar, index)}
@@ -268,7 +355,6 @@ export function UsageBarGraph2D({
             <div className="bar2d-tooltip-date">{formatMonthDay(hover.bar.date)}</div>
             <div className="bar2d-tooltip-total">
               <span>{exactTokens(hover.bar.totalTokens)} tokens</span>
-              <span>{formatCost(hover.bar.totalCost)}</span>
             </div>
             <div className="bar2d-tooltip-rows">
               {hover.bar.segments.map(segment => {
@@ -280,7 +366,7 @@ export function UsageBarGraph2D({
                       {style.displayName.replace(/\s+(CLI|Code|IDE)$/i, '')}
                     </span>
                     <span className="bar2d-tooltip-value">
-                      {exactTokens(segment.tokens)} · {formatCost(segment.cost)}
+                      {exactTokens(segment.tokens)}
                     </span>
                   </div>
                 )

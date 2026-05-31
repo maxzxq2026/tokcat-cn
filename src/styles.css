@@ -151,22 +151,35 @@ html, body, #root {
   color: var(--text);
   min-width: 0;
   letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 .header-num {
   color: var(--blue);
   font-weight: 700;
+  font-size: 20px;
 }
-.header-text { color: var(--text); }
+.header-text {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 400;
+}
 
-.year-select, .theme-select {
+.year-select, .month-select {
   background: transparent;
   color: var(--blue);
   border: none;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   cursor: pointer;
-  padding: 4px 6px;
+  padding: 4px 2px;
   font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.year-select:hover, .month-select:hover {
+  opacity: 0.8;
 }
 .theme-select {
   color: var(--text);
@@ -659,6 +672,301 @@ html, body, #root {
   color: var(--text-secondary);
   font-size: 10px;
   font-weight: 650;
+}
+
+/* Agent model card (replaces limits card) */
+.agent-model-card {
+  background: var(--card-solid);
+  border: 0.5px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.agent-model-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.agent-model-title {
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text);
+  margin: 0;
+}
+.agent-model-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Overview: compact agent list */
+.agent-model-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.agent-model-row {
+  display: grid;
+  grid-template-columns: 8px 1fr auto auto auto;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text);
+  padding: 4px 0;
+}
+.agent-model-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.agent-model-name {
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.agent-model-mid {
+  color: var(--text-muted);
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+.agent-model-tokens {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.agent-model-msgs {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 48px;
+  text-align: right;
+}
+
+/* Single-agent summary row */
+.agent-model-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.agent-model-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.agent-model-stat-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.agent-model-stat-value {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Model horizontal bar chart */
+.model-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.model-bar-row {
+  display: grid;
+  grid-template-columns: minmax(100px, 140px) 1fr minmax(100px, 140px);
+  gap: 8px;
+  align-items: center;
+}
+.model-bar-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+.model-bar-track {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(120, 120, 128, 0.12);
+  overflow: hidden;
+  min-width: 40px;
+}
+.model-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 200ms ease;
+}
+.model-bar-val {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Stacked bar for cache */
+.model-bar-cache,
+.model-bar-normal {
+  height: 100%;
+  transition: width 200ms ease;
+}
+.model-bar-cache {
+  border-radius: 999px 0 0 999px;
+}
+.model-bar-normal {
+  border-radius: 0 999px 999px 0;
+}
+.model-cache-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+.model-cache-tokens {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.model-cache-rate {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.model-cache-inline {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  text-align: left;
+}
+.model-cache-summary {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--card-border);
+}
+
+/* Donut chart */
+/* Pie chart */
+.pie-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+.pie-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 16px;
+}
+.pie-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+}
+.pie-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.pie-legend-label {
+  color: var(--text-secondary);
+}
+.pie-legend-value {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.bar2d-pie {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+/* Donut chart */
+.donut-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.donut-center-label {
+  font-size: 10px;
+  fill: var(--text-muted);
+}
+.donut-center-value {
+  font-size: 14px;
+  font-weight: 700;
+  fill: var(--text);
+}
+.donut-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 16px;
+}
+.donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+}
+.donut-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.donut-legend-label {
+  color: var(--text-secondary);
+}
+.donut-legend-value {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Header stats */
+.header-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 6px;
+}
+.header-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.header-stat-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.header-stat-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
 /* 2D stacked bar graph */

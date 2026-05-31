@@ -3,20 +3,57 @@ import { Panel } from './components/Panel'
 import { HeaderBar } from './components/HeaderBar'
 import { StreaksCard } from './components/StreaksCard'
 import { SettingsPanel } from './components/SettingsPanel'
-import { AgentLimitsCard } from './components/AgentLimitsCard'
+import { AgentModelCard } from './components/AgentModelCard'
 import { DashboardTabs } from './components/DashboardTabs'
 import { UsageBarGraph2D, UsageView } from './components/UsageBarGraph2D'
 import { buildGrid } from './lib/grid'
 import { useGraphStream } from './hooks/useGraphStream'
 import { useAgentUsage } from './hooks/useAgentUsage'
-import { computeStats } from './lib/stats'
+import { computeStats, aggregateByModel } from './lib/stats'
 import { isTauri } from './lib/runtime'
+
+// 模型颜色映射（与 ModelBarChart 保持一致）
+const MODEL_COLORS: Record<string, string> = {
+  'claude': '#8b5cf6',
+  'claude-3': '#8b5cf6',
+  'claude-3.5': '#a78bfa',
+  'claude-4': '#7c3aed',
+  'sonnet': '#8b5cf6',
+  'opus': '#7c3aed',
+  'haiku': '#a78bfa',
+  'gpt': '#10b981',
+  'gpt-4': '#10b981',
+  'gpt-4o': '#059669',
+  'o3': '#059669',
+  'o4': '#047857',
+  'gemini': '#3b82f6',
+  'gemini-2': '#60a5fa',
+  'hermes': '#fbbf24',
+  'deepseek': '#f97316',
+  'qwen': '#a855f7',
+  'llama': '#ef4444',
+}
+
+function getModelColor(model: string): string {
+  const lower = model.toLowerCase()
+  // 先尝试完全匹配
+  for (const [key, color] of Object.entries(MODEL_COLORS)) {
+    if (lower === key) return color
+  }
+  // 再尝试包含匹配（优先匹配更长的关键词）
+  const sortedKeys = Object.keys(MODEL_COLORS).sort((a, b) => b.length - a.length)
+  for (const key of sortedKeys) {
+    if (lower.includes(key)) return MODEL_COLORS[key]
+  }
+  return '#6b7280'
+}
 import { computeTrayTitle, loadSettings, saveSettings, Settings } from './lib/settings'
 import { TraceBucket, RateUpdate } from './lib/usage'
 import { UsageTraceCard } from './components/UsageTraceCard'
 import { checkForUpdatesSilent, checkForUpdatesInteractive } from './lib/updater'
 import { getTheme, THEMES, ThemeName } from './lib/themes'
 import { getClientStyle } from './lib/clients'
+import { humanizeTokens } from './lib/format'
 
 const THEME_KEY = 'tokcat:theme:v1'
 const USAGE_VIEW_KEY = 'tokcat:usageview:v1'
@@ -43,6 +80,7 @@ function defaultYear(): string {
 
 export default function App() {
   const [year, setYear] = useState<string>(defaultYear())
+  const [month, setMonth] = useState<number>(new Date().getMonth() + 1)
   const [refreshTick, setRefreshTick] = useState(0)
   const { payload, error } = useGraphStream(year)
   const agentUsage = useAgentUsage(refreshTick)
@@ -194,13 +232,13 @@ export default function App() {
 
   const overviewStats = useMemo(() => {
     if (!payload) return null
-    return computeStats(payload, overviewClientSet)
-  }, [overviewClientSet, payload])
+    return computeStats(payload, overviewClientSet, month)
+  }, [overviewClientSet, payload, month])
 
   const activeStats = useMemo(() => {
     if (!payload) return null
-    return computeStats(payload, activeClientSet)
-  }, [activeClientSet, payload])
+    return computeStats(payload, activeClientSet, month)
+  }, [activeClientSet, payload, month])
 
   // Calendar grids for the 3D usage view, one per visible card. Built from the
   // same per-day token totals the stats already aggregate, so 3D and 2D show
@@ -336,7 +374,9 @@ export default function App() {
                 totalTokens={overviewStats.totalTokens}
                 year={year}
                 years={allYears}
+                month={month}
                 onYearChange={setYear}
+                onMonthChange={setMonth}
                 theme={theme}
                 onThemeChange={(t) => setTheme(t as ThemeName)}
                 onRefresh={() => setRefreshTick(t => t + 1)}
@@ -356,9 +396,12 @@ export default function App() {
                     graphLight={palette.graphLight}
                     graphDark={palette.graphDark}
                     accent={mode.accent}
+                    contributions={payload.contributions}
+                    month={month}
+                    year={year}
                     stats={overviewStats}
                   />
-                  <AgentLimitsCard clients={dashboardClients} trace={trace} agentUsage={agentUsage.payload} />
+                  <AgentModelCard clients={dashboardClients} contributions={payload.contributions} trace={trace} month={month} />
                   <UsageTraceCard
                     buckets={trace}
                     windowSecs={600}
@@ -369,12 +412,13 @@ export default function App() {
                 </div>
               ) : (
                 <div className="dashboard-stack">
-                  <AgentLimitsCard
+                  <AgentModelCard
                     clients={[activeTab]}
+                    contributions={payload.contributions}
                     trace={trace}
-                    agentUsage={agentUsage.payload}
-                    title={`${getClientStyle(activeTab).displayName} limits`}
-                    note="会话 / 每周 / 模型限额"
+                    title={`${getClientStyle(activeTab).displayName} 模型用量`}
+                    showCache={true}
+                    month={month}
                   />
                   <UsageBarGraph2D
                     payload={payload}
@@ -387,6 +431,9 @@ export default function App() {
                     graphLight={palette.graphLight}
                     graphDark={palette.graphDark}
                     accent={mode.accent}
+                    contributions={payload.contributions}
+                    month={month}
+                    year={year}
                     stats={activeStats}
                   />
                   <StreaksCard longest={activeStats.streaks.longest} current={activeStats.streaks.current} />

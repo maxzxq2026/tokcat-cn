@@ -30,7 +30,7 @@ export function ContributionGraph2D({ grid, colorRgb = '37, 99, 235' }: Props) {
           return (
             <rect key={i} x={x} y={y} width={cellSize} height={cellSize} rx={2} fill={fill}>
               {c.active && (
-                <title>{`${formatMonthDay(c.date)} • ${humanizeTokens(c.tokens)} • ${formatCost(c.cost)}`}</title>
+                <title>{`${formatMonthDay(c.date)} • ${humanizeTokens(c.tokens)}`}</title>
               )}
             </rect>
           )

@@ -10,6 +10,7 @@ import opencodeIcon from '../assets/agent-icons/opencode.svg?raw'
 import droidIcon from '../assets/agent-icons/droid.svg?raw'
 import kilocodeIcon from '../assets/agent-icons/kilocode.svg?raw'
 import syntheticIcon from '../assets/agent-icons/synthetic.svg?raw'
+import hermesIcon from '../assets/agent-icons/hermes.svg?raw'
 
 // 'mono' icons are single-color glyphs we tint white over the brand-color disc.
 // 'full' icons carry their own design (background + colors) and fill the disc as-is.
@@ -35,12 +36,12 @@ const REGISTRY: Record<string, RegistryEntry> = {
   openclaw: { displayName: 'OpenClaw', color: '#dc2626' },
   gemini: { displayName: 'Gemini CLI', color: '#60a5fa', iconRaw: geminiIcon, iconType: 'mono' },
   opencode: { displayName: 'OpenCode', color: '#1f2937', iconRaw: opencodeIcon, iconType: 'full' },
-  codex: { displayName: 'Codex CLI', color: '#9ca3af', iconRaw: codexIcon, iconType: 'full' },
+  codex: { displayName: 'Codex CLI', color: '#10b981', iconRaw: codexIcon, iconType: 'full' },
   copilot: { displayName: 'Copilot CLI', color: '#1f2937', iconRaw: copilotIcon, iconType: 'mono' },
   cursor: { displayName: 'Cursor IDE', color: '#0ea5e9', iconRaw: cursorIcon, iconType: 'mono' },
   amp: { displayName: 'Amp', color: '#10b981', iconRaw: ampIcon, iconType: 'mono' },
   droid: { displayName: 'Droid', color: '#22c55e', iconRaw: droidIcon, iconType: 'full' },
-  hermes: { displayName: 'Hermes', color: '#a78bfa' },
+  hermes: { displayName: 'Hermes', color: '#fbbf24', iconRaw: hermesIcon, iconType: 'full' },
   pi: { displayName: 'Pi', color: '#f472b6', iconRaw: piIcon, iconType: 'mono' },
   kimi: { displayName: 'Kimi CLI', color: '#fbbf24' },
   qwen: { displayName: 'Qwen CLI', color: '#7c3aed', iconRaw: qwenIcon, iconType: 'mono' },

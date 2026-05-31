@@ -20,7 +20,7 @@ export function parseISODate(s: string): Date {
 
 export function formatMonthDay(s: string): string {
   const d = parseISODate(s)
-  return `${MONTHS_SHORT[d.getMonth()]} ${d.getDate()}`
+  return `${d.getMonth() + 1}/${d.getDate()}`
 }
 
 export function formatMMDD(s: string): string {

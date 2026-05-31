@@ -6,24 +6,32 @@ interface Props {
   totalTokens: number
   year: string
   years: string[]
+  month: number
   onYearChange: (y: string) => void
+  onMonthChange: (m: number) => void
   theme: string
   onThemeChange: (t: string) => void
   onRefresh?: () => void
   onOpenSettings?: () => void
 }
 
-export function HeaderBar({ totalTokens, year, years, onYearChange, theme, onThemeChange, onRefresh, onOpenSettings }: Props) {
+export function HeaderBar({ totalTokens, year, years, month, onYearChange, onMonthChange, theme, onThemeChange, onRefresh, onOpenSettings }: Props) {
   return (
     <div className="header-bar" data-tauri-drag-region>
       <div className="header-brand" data-tauri-drag-region>
         <img className="brand-logo" src="/tokcat-logo.png" alt="" aria-hidden="true" data-tauri-drag-region />
         <div className="header-title" data-tauri-drag-region>
           <span className="header-num" data-tauri-drag-region>{humanizeTokens(totalTokens)}</span>
-          <span className="header-text" data-tauri-drag-region> 个 Token 已使用，年份 </span>
+          <span className="header-text" data-tauri-drag-region> Token</span>
           <select className="year-select" value={year} onChange={e => onYearChange(e.target.value)}>
             {years.map(y => (
               <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+          <select className="month-select" value={month} onChange={e => onMonthChange(Number(e.target.value))}>
+            <option value={0}>全年</option>
+            {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+              <option key={m} value={m}>{m}</option>
             ))}
           </select>
         </div>

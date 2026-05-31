@@ -294,7 +294,6 @@ export function ContributionGraph3D({ grid, activeLight = '#bfdbfe', activeDark 
           >
             <div className="tt-date">{formatMonthDay(hover.date)}</div>
             <div className="tt-line">{humanizeTokens(hover.tokens)} tokens</div>
-            <div className="tt-line">{formatCost(hover.cost)}</div>
           </div>,
           document.body,
         )}
