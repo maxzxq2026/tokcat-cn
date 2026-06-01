@@ -73,7 +73,7 @@
   "plugins": {
     "updater": {
       "endpoints": [
-        "https://github.com/handlecusion/tokcat/releases/latest/download/latest.json"
+        "https://github.com/maxzxq2026/tokcat-cn/releases/latest/download/latest.json"
       ],
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDk0QUMzNDdENDg2MjUzOUIKUldTYlUySklmVFNzbEFqWkh3WURYdkltOXB3eEZaRnhzYTVwdEVmOExkeSsxa0dXQlpONjZHUnUK"
     }
