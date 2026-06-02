@@ -1,4 +1,4 @@
-use chrono::{Local, SecondsFormat, TimeZone, Utc};
+use chrono::{SecondsFormat, TimeZone, Utc};
 use rusqlite::{Connection, OpenFlags};
 use serde::Serialize;
 use serde_json::Value;
@@ -1707,11 +1707,10 @@ fn now_ms() -> i64 {
 }
 
 fn date_from_timestamp_ms(timestamp_ms: i64) -> String {
-    Local
-        .timestamp_millis_opt(timestamp_ms)
+    Utc.timestamp_millis_opt(timestamp_ms)
         .single()
-        .or_else(|| Local.timestamp_millis_opt(timestamp_ms).earliest())
-        .unwrap_or_else(Local::now)
+        .or_else(|| Utc.timestamp_millis_opt(timestamp_ms).earliest())
+        .unwrap_or_else(Utc::now)
         .format("%Y-%m-%d")
         .to_string()
 }
