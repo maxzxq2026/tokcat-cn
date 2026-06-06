@@ -74,7 +74,7 @@ rm -f "$DMG_RW"
 
 SIGNATURE="$(cat "$APP_SIG")"
 PUB_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-DOWNLOAD_BASE="https://github.com/handlecusion/tokcat/releases/download/$TAG"
+DOWNLOAD_BASE="https://github.com/maxzxq2026/tokcat-cn/releases/download/$TAG"
 
 LATEST_JSON="$BUNDLE_DIR/latest.json"
 cat > "$LATEST_JSON" <<EOF
@@ -110,4 +110,4 @@ gh release create "$TAG" \
   --title "Tokcat $VERSION" \
   --notes "$NOTES"
 
-echo "==> Done: https://github.com/handlecusion/tokcat/releases/tag/$TAG"
+echo "==> Done: https://github.com/maxzxq2026/tokcat-cn/releases/tag/$TAG"
