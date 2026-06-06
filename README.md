@@ -6,12 +6,13 @@
 
 <p align="center">
   <a href="README.md">English</a> |
+  <a href="README.zh-CN.md">中文</a> |
   <a href="README.ko-KR.md">한국어</a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/handlecusion/tokcat/releases/latest"><img src="https://img.shields.io/github/v/release/handlecusion/tokcat?style=flat-square&color=blue" alt="Release"></a>
-  <a href="https://github.com/handlecusion/tokcat/stargazers"><img src="https://img.shields.io/github/stars/handlecusion/tokcat?style=flat-square" alt="Stars"></a>
+  <a href="https://github.com/maxzxq2026/tokcat-cn/releases/latest"><img src="https://img.shields.io/github/v/release/maxzxq2026/tokcat-cn?style=flat-square&color=blue" alt="Release"></a>
+  <a href="https://github.com/maxzxq2026/tokcat-cn/stargazers"><img src="https://img.shields.io/github/stars/maxzxq2026/tokcat-cn?style=flat-square" alt="Stars"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="MIT Licence"></a>
   <img src="https://img.shields.io/badge/macOS-11%2B-black?style=flat-square&logo=apple" alt="macOS 11+">
   <img src="https://img.shields.io/badge/Apple%20Silicon-arm64-success?style=flat-square" alt="Apple Silicon">
@@ -45,7 +46,7 @@ That's it. The fully-qualified `user/tap/cask` form auto-taps `handlecusion/home
 The in-app updater checks for new releases on launch and again every 30 minutes; signed `.tar.gz` artifacts are verified against the embedded public key before install.
 
 > Prefer a one-off DMG? Grab `Tokcat_<version>_aarch64.dmg` from
-> [Releases](https://github.com/handlecusion/tokcat/releases). No separate
+> [Releases](https://github.com/maxzxq2026/tokcat-cn/releases). No separate
 > token-usage CLI is required.
 
 ---
@@ -226,7 +227,7 @@ Tokcat tracks **Claude Code, OpenAI Codex, Cursor, OpenCode, Google Gemini, GitH
 
 ### Does Tokcat send my data anywhere?
 
-No. Tokcat's only network request is a check against `https://github.com/handlecusion/tokcat/releases/latest/download/latest.json` for new releases. There is no telemetry, no analytics, no cloud sync, no account, and no third-party server. All token-usage data is read locally from session logs.
+No. Tokcat's only network request is a check against `https://github.com/maxzxq2026/tokcat-cn/releases/latest/download/latest.json` for new releases. There is no telemetry, no analytics, no cloud sync, no account, and no third-party server. All token-usage data is read locally from session logs.
 
 ### How is Tokcat different from CLI token-usage tools?
 
@@ -245,7 +246,7 @@ If installed via Homebrew: `brew uninstall --cask tokcat`. If installed via DMG:
 ## Build From Source
 
 ```sh
-git clone https://github.com/handlecusion/tokcat.git
+git clone https://github.com/maxzxq2026/tokcat-cn.git
 cd tokcat
 pnpm install            # or: npm install
 pnpm tauri:dev          # opens the menubar app with Vite HMR on :4061
@@ -277,7 +278,7 @@ After the release lands, bump `Casks/tokcat.rb` in [`handlecusion/homebrew-tokca
 
 | Repo | Role |
 |---|---|
-| [`handlecusion/tokcat`](https://github.com/handlecusion/tokcat) | App source, GitHub Releases, in-app updater manifest |
+| [`handlecusion/tokcat`](https://github.com/maxzxq2026/tokcat-cn) | App source, GitHub Releases, in-app updater manifest |
 | [`handlecusion/homebrew-tokcat`](https://github.com/handlecusion/homebrew-tokcat) | Homebrew tap (`Casks/tokcat.rb`) — what `brew install --cask handlecusion/tokcat/tokcat` resolves |
 | [`junhoyeo/tokscale`](https://github.com/junhoyeo/tokscale) | Upstream CLI used as a reference for supported local log formats |
 
