@@ -494,6 +494,12 @@ fn parse_codex() -> Vec<UsageMessage> {
     let codex_home = std::env::var_os("CODEX_HOME")
         .map(PathBuf::from)
         .unwrap_or_else(|| home.join(".codex"));
+
+    // Read the active model from config.toml so tokcat displays the
+    // actual provider model rather than whatever the session file
+    // recorded (which can be stale after a CC Switch provider change).
+    let config_model = read_codex_config_model(&codex_home);
+
     let mut roots = vec![
         codex_home.join("sessions"),
         codex_home.join("archived_sessions"),
@@ -507,10 +513,35 @@ fn parse_codex() -> Vec<UsageMessage> {
         for file in collect_files(&root, |p| {
             p.extension().and_then(|s| s.to_str()) == Some("jsonl")
         }) {
-            out.extend(parse_codex_file(&file));
+            out.extend(parse_codex_file(&file, config_model.as_deref()));
         }
     }
     out
+}
+
+/// Read the top-level `model` key from Codex's config.toml.
+/// Returns `None` when the file is absent or unreadable.
+fn read_codex_config_model(codex_home: &Path) -> Option<String> {
+    let config_path = codex_home.join("config.toml");
+    let content = fs::read_to_string(config_path).ok()?;
+    for line in content.lines() {
+        let trimmed = line.trim();
+        // Stop at the first section header; only top-level keys matter.
+        if trimmed.starts_with('[') {
+            break;
+        }
+        if let Some(value) = trimmed.strip_prefix("model") {
+            // "model = "..."  or  "model = '...'"
+            let value = value.trim();
+            if let Some(eq_rest) = value.strip_prefix('=') {
+                let raw = eq_rest.trim().trim_matches('"').trim().to_string();
+                if !raw.is_empty() && raw != "model" {
+                    return Some(raw);
+                }
+            }
+        }
+    }
+    None
 }
 
 #[derive(Clone, Copy, Default, PartialEq, Eq)]
@@ -594,7 +625,7 @@ impl CodexTotals {
     }
 }
 
-fn parse_codex_file(path: &Path) -> Vec<UsageMessage> {
+fn parse_codex_file(path: &Path, config_model_override: Option<&str>) -> Vec<UsageMessage> {
     let file = match fs::File::open(path) {
         Ok(f) => f,
         Err(_) => return Vec::new(),
@@ -672,9 +703,13 @@ fn parse_codex_file(path: &Path) -> Vec<UsageMessage> {
         let Some(info) = payload.get("info") else {
             continue;
         };
-        let model = string_value(info.get("model"))
-            .or_else(|| string_value(info.get("model_name")))
-            .or_else(|| current_model.clone())
+        let model = config_model_override
+            .map(|m| m.to_string())
+            .or_else(|| {
+                string_value(info.get("model"))
+                    .or_else(|| string_value(info.get("model_name")))
+                    .or_else(|| current_model.clone())
+            })
             .unwrap_or_else(|| "unknown".to_string());
         if model != "unknown" {
             current_model = Some(model.clone());

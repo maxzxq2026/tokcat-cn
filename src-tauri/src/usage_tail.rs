@@ -119,6 +119,10 @@ impl UsageTailer {
         };
         let cold_cutoff_ms = now_ms() - COLD_SCAN_LOOKBACK_SECS * 1000;
 
+        // Read the Codex config model once per tick so the live trace
+        // picks up model changes without a restart.
+        let codex_config_model = read_codex_config_model();
+
         added += self.tick_hermes(is_cold);
 
         for (root, client) in roots() {
@@ -168,9 +172,9 @@ impl UsageTailer {
                         continue;
                     }
                     if size < start_offset {
-                        added += self.read_growth(&path, client, 0, size, mtime_ms);
+                        added += self.read_growth(&path, client, 0, size, mtime_ms, codex_config_model.as_deref());
                     } else {
-                        added += self.read_growth(&path, client, start_offset, size, mtime_ms);
+                        added += self.read_growth(&path, client, start_offset, size, mtime_ms, codex_config_model.as_deref());
                     }
                 }
             }
@@ -187,6 +191,7 @@ impl UsageTailer {
         start: u64,
         end: u64,
         mtime_ms: i64,
+        codex_config_model: Option<&str>,
     ) -> usize {
         let mut added = 0;
         let mut file = match fs::File::open(path) {
@@ -224,7 +229,7 @@ impl UsageTailer {
             }
             let recorded = match client {
                 ClientKind::Claude => self.parse_claude_line(path, trimmed),
-                ClientKind::Codex => self.parse_codex_line(trimmed, &mut codex_model),
+                ClientKind::Codex => self.parse_codex_line(trimmed, &mut codex_model, codex_config_model),
             };
             if recorded {
                 added += 1;
@@ -332,7 +337,7 @@ impl UsageTailer {
         )
     }
 
-    fn parse_codex_line(&self, raw: &[u8], codex_model: &mut Option<String>) -> bool {
+    fn parse_codex_line(&self, raw: &[u8], codex_model: &mut Option<String>, codex_config_model: Option<&str>) -> bool {
         let value: serde_json::Value = match serde_json::from_slice(raw) {
             Ok(v) => v,
             Err(_) => return false,
@@ -395,9 +400,9 @@ impl UsageTailer {
             return false;
         }
 
-        let model = codex_model
-            .clone()
-            .map(|m| normalize_model(&m))
+        let model = codex_config_model
+            .map(|m| normalize_model(m))
+            .or_else(|| codex_model.clone().map(|m| normalize_model(&m)))
             .unwrap_or_else(|| "unknown".to_string());
 
         let ts_ms = value
@@ -636,6 +641,33 @@ fn roots() -> Vec<(PathBuf, ClientKind)> {
         }
     }
     out
+}
+
+/// Read the top-level `model` key from Codex's config.toml.
+/// Returns `None` when the file is absent or unreadable.
+fn read_codex_config_model() -> Option<String> {
+    let home = std::env::var_os("HOME")?;
+    let codex_home = std::env::var_os("CODEX_HOME")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| PathBuf::from(home).join(".codex"));
+    let config_path = codex_home.join("config.toml");
+    let content = fs::read_to_string(config_path).ok()?;
+    for line in content.lines() {
+        let trimmed = line.trim();
+        if trimmed.starts_with('[') {
+            break;
+        }
+        if let Some(value) = trimmed.strip_prefix("model") {
+            let value = value.trim();
+            if let Some(eq_rest) = value.strip_prefix('=') {
+                let raw = eq_rest.trim().trim_matches('"').trim().to_string();
+                if !raw.is_empty() && raw != "model" {
+                    return Some(raw);
+                }
+            }
+        }
+    }
+    None
 }
 
 fn system_time_to_ms(t: Option<SystemTime>) -> i64 {
